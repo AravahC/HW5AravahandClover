@@ -20,6 +20,35 @@ class Customer:
     """
 
     # TODO implement this class as instructed
+
+    def __init__(self, id, name, city, address):
+        if(id < 0):
+            #throw exception
+            pass
+        self.id = id
+        self.name = name
+        self.city = city
+        self.address = address
+    
+    def get_Name(self):
+        return self.name
+    def set_Name(self, newName):
+        self.name = newName
+    def get_ID(self):
+        return self.id
+    def set_ID(self, id):
+        self.id = id
+    def set_City(self, city):
+        self.city = city
+    def get_City(self):
+        return self.city
+    def get_address(self):
+        return self.address
+    def set_address(self, address):
+        self.address = address
+    def __str__(self):
+        print("Customer(id="+self.id+", name='"+self.name+"', city='"+self.city+", address="+self.address+"')")
+   
     pass
 
 
@@ -42,6 +71,33 @@ class Supplier:
     """
 
     # TODO implement this class as instructed
+    def __init__(self, id, name, city, address):
+        if (id < 0):
+            #throw exception
+            pass
+        self.id = id
+        self.name = name
+        self.city = city
+        self.address = address
+    
+    def get_Name(self):
+        return self.name
+    def set_Name(self, newName):
+        self.name = newName
+    def get_ID(self):
+        return self.id
+    def set_ID(self, id):
+        self.id = id
+    def set_City(self, city):
+        self.city = city
+    def get_City(self):
+        return self.city
+    def get_address(self):
+        return self.address
+    def set_address(self, address):
+        self.address = address
+    def __str__(self):
+        print("Supplier(id="+self.id+", name='"+self.name+"', city='"+self.city+", address="+self.address+"')")
     pass
 
 
@@ -68,6 +124,40 @@ class Product:
     """
 
     # TODO implement this class as instructed
+    def __init__(self, id, name, price, supplier_id, quantity):
+        self.id = id
+        self.name = name
+        self.price = price
+        self.quantity = quantity
+        self,supplier_id = supplier_id
+    
+    def get_Name(self):
+        return self.name
+    def set_Name(self, newName):
+        self.name = newName
+    def get_ID(self):
+        return self.id
+    def set_ID(self, id):
+        self.id = id
+    def set_supplierID(self, supplier_ID):
+        self.supplier_id = supplier_ID
+    def get_SupplierID(self):
+        return self.supplier_id
+    def get_quantity(self):
+        return self.quantity
+    def set_quantity(self, quantity):
+        if(quantity>=0):
+            self.quantity = quantity
+        else:
+            #exception
+            pass
+    def set_Price(self, price):
+        if(price>=0):
+            self.price = price
+    def get_Price(self, price):
+        return self.price
+    def __str__(self):
+        print("Product(id="+self.id+", name='"+self.name+"', price='"+self.price+", supplier_id="+self.supplier_id+", quality="+self.quality+")")
     pass
 
 
