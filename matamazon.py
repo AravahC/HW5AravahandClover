@@ -208,6 +208,10 @@ class MatamazonSystem:
     """
 
     def __init__(self):
+        suppliers = {}
+        customers = {}
+        orders = {}
+        products = []
         """
         Initialize an empty Matamazon system.
 
@@ -232,6 +236,14 @@ class MatamazonSystem:
                 - If the entity ID already exists in the system (note: IDs must be unique across
                   customers AND suppliers).
         """
+        if(customers.get(entity.id) != None or suppliers.get(entity.id) != None):
+            #throw invalid ID exception
+        else:
+            if(is_customer):
+                customers[entity.id] = entity
+            else:
+                suppliers[entity.id] = entity
+
         # TODO implement this method as instructed
         pass
 
@@ -254,6 +266,20 @@ class MatamazonSystem:
                 - If the supplier_id does not exist in the system.
                 - If attempting to update a product but supplier_id differs from the existing product.
         """
+        if product not in self.products:
+            self.products.add(product)
+        else:
+            for prod in products:
+                if product.id == prod.id:
+                    if product.supplier != prod.supplier:
+                        #throw InvalidIdException
+                    elif suppliers[prod.supplier_id] == None:
+                        #throwInvalidIdException
+                    else:
+                        prod.name = product.name
+                        prod.setQuantity(product.quantity)
+                        prod.setPrice(product.price)
+
         # TODO implement this method as instructed
         pass
 
@@ -325,6 +351,12 @@ class MatamazonSystem:
                 - Sorted by ascending price.
                 - If no matching products exist, return an empty list.
         """
+        right_products = []
+        for product in products:
+            if(product.getName().contains(query) && product.get_Price() < max_price):
+                right_products.append(product)
+        sort(right_products, price)
+        return right_products
         # TODO implement this method as instructed
         pass
 
