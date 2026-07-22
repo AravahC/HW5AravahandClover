@@ -422,12 +422,12 @@ class MatamazonSystem:
         if(_id < 0):
             raise InvalidIdException("ID must be non-negative.")
         if(class_type == "Customer"):
+            if _id not in self.customers:
+                raise InvalidIdException("Customer does not exist.")
             for order in self.orders.values():
-                if _id not in self.customers:
-                    raise InvalidIdException("Customer does not exist.")
                 if order.customer_id == _id:
-                    raise InvalidIdException("ID already exists")
-            
+                    raise InvalidIdException("Cannot remove a customer with an existing order.")
+
             self.customers.pop(_id)
         elif (class_type == "Supplier"):
             if _id not in self.suppliers:
@@ -446,7 +446,7 @@ class MatamazonSystem:
                     raise InvalidIdException("ID cannot be removed.")
             self.products.pop(_id)
         elif (class_type == "Order"):
-            if _id not in self.customers:
+            if _id not in self.orders:
                 raise InvalidIdException("Order does not exist.")
             orderquantity = self.orders[_id].quantity
             self.products[self.orders[_id].product_id].quantity += orderquantity
@@ -586,88 +586,47 @@ def load_system_from_file(path):
     """
     system = MatamazonSystem()
 
+    # The system file uses the same textual format produced by
+    # export_system_to_file / print(obj) — e.g.
+    #   Customer(id=1, name='Dana', city='Haifa', address='1 St')
+    # Since the printed keyword names match the constructors' parameter
+    # names exactly, eval() reconstructs the object directly.
+    eval_globals = {"Customer": Customer, "Supplier": Supplier, "Product": Product}
+
+    customers_and_suppliers = []
+    products = []
+
     with open(path) as file:
-
         for line in file:
-
-            line_pieces = line.strip().split()
-
-            if not line_pieces:
+            line = line.strip()
+            if not line:
                 continue
 
-            command = line_pieces[0]
+            try:
+                obj = eval(line, eval_globals)
+            except (InvalidIdException, InvalidPriceException):
+                # A real object was being built but the data was invalid:
+                # per spec, stop and propagate this exception.
+                raise
+            except Exception:
+                # Not a valid Customer/Supplier/Product line -> ignore it.
+                continue
 
-            if command == "register":
+            if isinstance(obj, Product):
+                products.append(obj)
+            elif isinstance(obj, (Customer, Supplier)):
+                customers_and_suppliers.append(obj)
+            # anything else eval() might produce is silently ignored
 
-                if line_pieces[1] == "customer":
+    # Register customers/suppliers first, then products, since the file
+    # gives no guarantee that a supplier line appears before its products.
+    for entity in customers_and_suppliers:
+        system.register_entity(entity, isinstance(entity, Customer))
 
-                    customer = Customer(
-                        int(line_pieces[2]),
-                        line_pieces[3],
-                        line_pieces[4],
-                        line_pieces[5]
-                    )
+    for product in products:
+        system.add_or_update_product(product)
 
-                    system.register_entity(customer, True)
-
-                else:
-
-                    supplier = Supplier(
-                        int(line_pieces[2]),
-                        line_pieces[3],
-                        line_pieces[4],
-                        line_pieces[5]
-                    )
-
-                    system.register_entity(supplier, False)
-
-            elif command == "add":
-
-                product = Product(
-                    int(line_pieces[1]),
-                    line_pieces[2],
-                    float(line_pieces[3]),
-                    int(line_pieces[4]),
-                    int(line_pieces[5])
-                )
-
-                system.add_or_update_product(product)
-
-            elif command == "update":
-                product = Product(
-                    int(line_pieces[1]),
-                    line_pieces[2],
-                    float(line_pieces[3]),
-                    int(line_pieces[4]),
-                    int(line_pieces[5])
-                )
-
-                system.add_or_update_product(product)
-
-            elif command == "order":
-                if len(line_pieces) == 3:
-                    system.place_order(
-                        int(line_pieces[1]),
-                        int(line_pieces[2])
-                    )
-                else:
-                    system.place_order(
-                        int(line_pieces[1]),
-                        int(line_pieces[2]),
-                        int(line_pieces[3])
-                    )
-            
-            elif command == "remove":
-                system.remove_object(line_pieces[2], line_pieces[1].capitalize())
-            
-            elif command == "search":
-                if len(line_pieces) > 2:
-                    results = system.search_products(line_pieces[1], int(line_pieces[2]))
-                else:
-                    results = system.search_products(line_pieces[1])
-                for product in results:
-                    print(product)
-        return system
+    return system
     
 
 def execute_script(system, script_file_path):
@@ -768,48 +727,56 @@ def execute_script_command(system, command):
         for product in results:
             print(product)
 
+USAGE_MESSAGE = (
+    "Usage: python3 matamazon.py -l < matamazon_log > -s < matamazon_system > "
+    "-o <output_file> -os <out_matamazon_system>"
+)
+
+
+class MatamazonArgumentParser(argparse.ArgumentParser):
+    """Argument parser that prints the exact required usage message and
+    exits with code 1 on any bad/missing/unknown flag, instead of
+    argparse's default error message/exit-code-2 behavior."""
+
+    def error(self, message):
+        print(USAGE_MESSAGE, file=sys.stderr)
+        exit(1)
+
+
 def main():
     # Create the argument parser
-    parser = argparse.ArgumentParser()
+    parser = MatamazonArgumentParser(add_help=False, allow_abbrev=False)
 
-    # Optional command-line arguments
-    parser.add_argument("-i")   # Existing system file
-    parser.add_argument("-l")   # Log/script file
-    parser.add_argument("-o")   # Export system file
-    parser.add_argument("-oj")  # Export orders as JSON
+    parser.add_argument("-l", dest="log_file")           # Log/script file (required)
+    parser.add_argument("-s", dest="system_file")        # Existing system file (optional)
+    parser.add_argument("-o", dest="output_file")        # Orders JSON export (optional)
+    parser.add_argument("-os", dest="out_system_file")   # System export (optional)
 
     # Read the command-line arguments
     args = parser.parse_args()
 
-    # Store them in variables
-    system_load_file = args.i
-    log_file = args.l
-    out_system_file_path = args.o
-    output_file = args.oj
-
     # A log/script file is required
-    if log_file is None:
-        print("Usage message", file=sys.stderr)
-        exit(1)
+    if args.log_file is None:
+        parser.error("missing required -l flag")
 
     # Load an existing system if supplied,
     # otherwise create an empty one.
     system = (
-        load_system_from_file(system_load_file)
-        if system_load_file
+        load_system_from_file(args.system_file)
+        if args.system_file
         else MatamazonSystem()
     )
 
     # Execute all commands in the log file
-    execute_script(system, log_file)
+    execute_script(system, args.log_file)
 
     # Export the current system (customers, suppliers, products)
-    if out_system_file_path:
-        system.export_system_to_file(out_system_file_path)
+    if args.out_system_file:
+        system.export_system_to_file(args.out_system_file)
 
     # Export orders
-    if output_file:
-        with open(output_file, "w") as file:
+    if args.output_file:
+        with open(args.output_file, "w") as file:
             system.export_orders(file)
     else:
         # If no output file was given,
@@ -820,8 +787,4 @@ def main():
 try:
     main()
 except Exception:
-    print("The Matamazon script has encountered an error")
-                
-
-
-
+    print("The matamazon script has encountered an error")
