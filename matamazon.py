@@ -761,7 +761,7 @@ def main():
         # If no output file was given,
         # print the JSON to the terminal.
         system.export_orders(sys.stdout)
-import traceback
+
 # if __name__ == "__main__":
 #     try:
 #         main()
@@ -778,5 +778,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception:
-        print("The matamazon script has encountered an error" + "\n")
-        sys.exit(0)
+        print("The matamazon script has encountered an error")
+        sys.exit(1)
