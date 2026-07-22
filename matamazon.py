@@ -166,7 +166,7 @@ class Product:
         if(quantity>=0):
             self.quantity = quantity
         else:
-            raise InvalidIdException("ID must be non-negative.")
+            raise ValueError("quantity must be non-negative")
     def reduce_quantity(self,num):
         self.quantity-=num
         if (self.quantity < 0):
@@ -636,7 +636,6 @@ def execute_script_command(system, command):
     command = line_pieces[0]
 
     if command == "register":
-
         if line_pieces[1] == "customer":
             customer = Customer(
                 int(line_pieces[2]),
@@ -656,7 +655,6 @@ def execute_script_command(system, command):
             system.register_entity(supplier, False)
 
     elif command == "add":
-
         product = Product(
             int(line_pieces[1]),
             line_pieces[2].replace("_", " "),
@@ -668,7 +666,6 @@ def execute_script_command(system, command):
         system.add_or_update_product(product)
 
     elif command == "update":
-
         product = Product(
             int(line_pieces[1]),
             line_pieces[2].replace("_", " "),
@@ -680,7 +677,6 @@ def execute_script_command(system, command):
         system.add_or_update_product(product)
 
     elif command == "order":
-
         if len(line_pieces) == 3:
             system.place_order(
                 int(line_pieces[1]),
@@ -694,14 +690,12 @@ def execute_script_command(system, command):
             )
 
     elif command == "remove":
-
         system.remove_object(
             int(line_pieces[2]),
             line_pieces[1].capitalize()
         )
 
     elif command == "search":
-
         if len(line_pieces) > 2:
             results = system.search_products(
                 line_pieces[1].replace("_", " "),
@@ -710,7 +704,7 @@ def execute_script_command(system, command):
         else:
             results = system.search_products(line_pieces[1].replace("_", " "))
 
-        print(results)
+        return results
 
 USAGE_MESSAGE = (
     "Usage: python3 matamazon.py -l < matamazon_log > -s < matamazon_system > "
@@ -772,5 +766,5 @@ if __name__ == "__main__":
     try:
         main()
     except Exception:
-        print("The matamazon script has encountered an error")
-        sys.exit(0)
+      print("The matamazon script has encountered an error")
+      sys.exit(0)
