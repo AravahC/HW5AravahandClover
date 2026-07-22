@@ -704,7 +704,7 @@ def execute_script_command(system, command):
         else:
             results = system.search_products(line_pieces[1].replace("_", " "))
 
-        return results
+        print(results)
 
 USAGE_MESSAGE = (
     "Usage: python3 matamazon.py -l < matamazon_log > -s < matamazon_system > "
