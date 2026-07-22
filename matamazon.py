@@ -427,6 +427,7 @@ class MatamazonSystem:
         if(_id < 0):
             raise InvalidIdException("ID must be non-negative.")
         if(class_type == "Customer"):
+            #print("Removing customer!")
             if _id not in self.customers:
                 raise InvalidIdException("Customer does not exist.")
             for order in self.orders.values():
@@ -435,6 +436,7 @@ class MatamazonSystem:
 
             self.customers.pop(_id)
         elif class_type == "Supplier":
+            #print("Removing supplier!")
             if _id not in self.suppliers:
                 raise InvalidIdException("Supplier does not exist.")
             for order in self.orders.values():
@@ -444,6 +446,7 @@ class MatamazonSystem:
 
             self.suppliers.pop(_id)
         elif (class_type == "Product"):
+            #print("Removing Product!")
             if _id not in self.products:
                 raise InvalidIdException("Product does not exist.")
             for order in self.orders.values():
@@ -451,6 +454,7 @@ class MatamazonSystem:
                     raise InvalidIdException("ID cannot be removed.")
             self.products.pop(_id)
         elif class_type == "Order":
+            #print("Removing order!")
             if _id not in self.orders:
                 raise InvalidIdException("Order does not exist.")
             order = self.orders.pop(_id)
@@ -480,11 +484,13 @@ class MatamazonSystem:
         query_str = str(query).replace("_", " ").lower()
         right_products = []
         if max_price is not None:
+            #print("This is max_price: ", max_price)
             max_price = float(max_price)
         for product in self.products.values():
                 if product.quantity > 0:
                     if query_str in product.get_Name().lower():
                         if max_price is None or product.get_Price() <= max_price:
+                            #print("adding a product!", product.name)
                             right_products.append(product)
 
         return sorted(right_products)
@@ -592,7 +598,7 @@ def load_system_from_file(path):
     customers_and_suppliers = []
     products = []
 
-    with open(path) as file:
+    with open(path, "r", encoding="utf=8") as file:
         for line in file:
             line = line.strip()
             if not line:
@@ -615,9 +621,11 @@ def load_system_from_file(path):
             # anything else eval() might produce is silently ignored
 
     for entity in customers_and_suppliers:
+        print("registering customer or supplier!")
         system.register_entity(entity, isinstance(entity, Customer))
 
     for product in products:
+        print("Registering product!")
         system.add_or_update_product(product)
 
     return system
@@ -627,82 +635,103 @@ def execute_script(system, script_file_path):
     """
     Opens the script file and executes every command in it.
     """
-    with open(script_file_path) as script_file:
+    with open(script_file_path, encoding="utf-8") as script_file:
         for command in script_file:
             execute_script_command(system, command)
 
 def execute_script_command(system, command):
     """
-    Executes a single command from the script file safely.
+    Executes a single command from the script file.
     """
+
     line_pieces = command.strip().split()
 
     if not line_pieces:
         return
 
-    cmd = line_pieces[0].lower()
+    command = line_pieces[0]
 
-    try:
-        if cmd == "register":
-            if line_pieces[1].lower() == "customer":
-                customer = Customer(
-                    int(line_pieces[2]),
-                    line_pieces[3].replace("_", " "),
-                    line_pieces[4].replace("_", " "),
-                    line_pieces[5].replace("_", " ")
-                )
-                system.register_entity(customer, True)
-            else:
-                supplier = Supplier(
-                    int(line_pieces[2]),
-                    line_pieces[3].replace("_", " "),
-                    line_pieces[4].replace("_", " "),
-                    line_pieces[5].replace("_", " ")
-                )
-                system.register_entity(supplier, False)
+    if command == "register":
 
-        elif cmd == "add" or cmd == "update":
-            product = Product(
-                int(line_pieces[1]),
-                line_pieces[2].replace("_", " "),
-                float(line_pieces[3]),
-                int(line_pieces[4]),
-                int(line_pieces[5])
+        if line_pieces[1] == "customer":
+            customer = Customer(
+                int(line_pieces[2]),
+                line_pieces[3].replace("_", " "),
+                line_pieces[4].replace("_", " "),
+                line_pieces[5].replace("_", " ")
             )
-            system.add_or_update_product(product)
+            system.register_entity(customer, True)
 
-        elif cmd == "order":
-            if len(line_pieces) == 3:
-                system.place_order(
-                    int(line_pieces[1]),
-                    int(line_pieces[2])
-                )
-            elif len(line_pieces) >= 4:
-                system.place_order(
-                    int(line_pieces[1]),
-                    int(line_pieces[2]),
-                    int(line_pieces[3])
-                )
+        else:
+            supplier = Supplier(
+                int(line_pieces[2]),
+                line_pieces[3].replace("_", " "),
+                line_pieces[4].replace("_", " "),
+                line_pieces[5].replace("_", " ")
+            )
+            system.register_entity(supplier, False)
 
-        elif cmd == "remove":
-            # Command format: remove <type> <id>
-            class_type = line_pieces[1].capitalize()
-            obj_id = int(line_pieces[2])
-            system.remove_object(obj_id, class_type)
+    elif command == "add":
 
-        elif cmd == "search":
-            query = line_pieces[1].replace("_", " ")
-            if len(line_pieces) > 2:
-                max_price = float(line_pieces[2])
-                results = system.search_products(query, max_price)
-            else:
-                results = system.search_products(query)
+        product = Product(
+            int(line_pieces[1]),
+            line_pieces[2].replace("_", " "),
+            float(line_pieces[3]),
+            int(line_pieces[4]),
+            int(line_pieces[5])
+        )
 
-            print(results)
+        system.add_or_update_product(product)
 
-    except Exception:
-        # Ignore invalid/malformed script lines per homework spec
-        pass
+    elif command == "update":
+
+        product = Product(
+            int(line_pieces[1]),
+            line_pieces[2].replace("_", " "),
+            float(line_pieces[3]),
+            int(line_pieces[4]),
+            int(line_pieces[5])
+        )
+
+        system.add_or_update_product(product)
+
+    elif command == "order":
+
+        if len(line_pieces) == 3:
+            system.place_order(
+                int(line_pieces[1]),
+                int(line_pieces[2])
+            )
+        else:
+            system.place_order(
+                int(line_pieces[1]),
+                int(line_pieces[2]),
+                int(line_pieces[3])
+            )
+
+    elif command == "remove":
+
+        system.remove_object(
+            int(line_pieces[2]),
+            line_pieces[1].capitalize()
+        )
+
+    elif command == "search":
+
+        if len(line_pieces) > 2:
+            results = system.search_products(
+                line_pieces[1].replace("_", " "),
+                float(line_pieces[2])
+            )
+        else:
+            results = system.search_products(line_pieces[1].replace("_", " "))
+
+        print(results)
+
+USAGE_MESSAGE = (
+    "Usage: python3 matamazon.py -l < matamazon_log > -s < matamazon_system > "
+    "-o <output_file> -os <out_matamazon_system>"
+)
 
 
 class MatamazonArgumentParser(argparse.ArgumentParser):
@@ -711,7 +740,7 @@ class MatamazonArgumentParser(argparse.ArgumentParser):
     argparse's default error message/exit-code-2 behavior."""
 
     def error(self, message):
-        #print(USAGE_MESSAGE, file=sys.stderr)
+        print(USAGE_MESSAGE, file=sys.stderr)
         exit(1)
 
 
@@ -756,8 +785,8 @@ def main():
         system.export_orders(sys.stdout)
 
 if __name__ == "__main__":
-    try:
+    #try:
         main()
-    except Exception:
-        print("The matamazon script has encountered an error")
-        sys.exit(0)
+    #except Exception:
+       # print("The matamazon script has encountered an error")
+        #sys.exit(0)
