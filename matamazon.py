@@ -670,8 +670,9 @@ def load_system_from_file(path):
                 
 
 
-if __name__ == "__main__":
+""" if __name__ == "__main__":
     import sys
 
     if len(sys.argv) > 1:
         load_system_from_file(sys.argv[1])
+    pass """
