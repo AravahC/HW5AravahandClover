@@ -1,5 +1,6 @@
 import json
 import argparse
+import sys
 
 class InvalidIdException(Exception):
     "id is not valid according to the specification"
@@ -667,20 +668,160 @@ def load_system_from_file(path):
                 for product in results:
                     print(product)
         return system
+    
+
+def execute_script(system, script_file_path):
+    """
+    Opens the script file and executes every command in it.
+    """
+    with open(script_file_path) as script_file:
+        for command in script_file:
+            execute_script_command(system, command)
+
+def execute_script_command(system, command):
+    """
+    Executes a single command from the script file.
+    """
+
+    line_pieces = command.strip().split()
+
+    if not line_pieces:
+        return
+
+    command = line_pieces[0]
+
+    if command == "register":
+
+        if line_pieces[1] == "customer":
+            customer = Customer(
+                int(line_pieces[2]),
+                line_pieces[3],
+                line_pieces[4],
+                line_pieces[5]
+            )
+            system.register_entity(customer, True)
+
+        else:
+            supplier = Supplier(
+                int(line_pieces[2]),
+                line_pieces[3],
+                line_pieces[4],
+                line_pieces[5]
+            )
+            system.register_entity(supplier, False)
+
+    elif command == "add":
+
+        product = Product(
+            int(line_pieces[1]),
+            line_pieces[2],
+            float(line_pieces[3]),
+            int(line_pieces[4]),
+            int(line_pieces[5])
+        )
+
+        system.add_or_update_product(product)
+
+    elif command == "update":
+
+        product = Product(
+            int(line_pieces[1]),
+            line_pieces[2],
+            float(line_pieces[3]),
+            int(line_pieces[4]),
+            int(line_pieces[5])
+        )
+
+        system.add_or_update_product(product)
+
+    elif command == "order":
+
+        if len(line_pieces) == 3:
+            print(system.place_order(
+                int(line_pieces[1]),
+                int(line_pieces[2])
+            ))
+        else:
+            print(system.place_order(
+                int(line_pieces[1]),
+                int(line_pieces[2]),
+                int(line_pieces[3])
+            ))
+
+    elif command == "remove":
+
+        system.remove_object(
+            int(line_pieces[2]),
+            line_pieces[1].capitalize()
+        )
+
+    elif command == "search":
+
+        if len(line_pieces) > 2:
+            results = system.search_products(
+                line_pieces[1],
+                float(line_pieces[2])
+            )
+        else:
+            results = system.search_products(line_pieces[1])
+
+        for product in results:
+            print(product)
+
+def main():
+    # Create the argument parser
+    parser = argparse.ArgumentParser()
+
+    # Optional command-line arguments
+    parser.add_argument("-i")   # Existing system file
+    parser.add_argument("-l")   # Log/script file
+    parser.add_argument("-o")   # Export system file
+    parser.add_argument("-oj")  # Export orders as JSON
+
+    # Read the command-line arguments
+    args = parser.parse_args()
+
+    # Store them in variables
+    system_load_file = args.i
+    log_file = args.l
+    out_system_file_path = args.o
+    output_file = args.oj
+
+    # A log/script file is required
+    if log_file is None:
+        print("Usage message", file=sys.stderr)
+        exit(1)
+
+    # Load an existing system if supplied,
+    # otherwise create an empty one.
+    system = (
+        load_system_from_file(system_load_file)
+        if system_load_file
+        else MatamazonSystem()
+    )
+
+    # Execute all commands in the log file
+    execute_script(system, log_file)
+
+    # Export the current system (customers, suppliers, products)
+    if out_system_file_path:
+        system.export_system_to_file(out_system_file_path)
+
+    # Export orders
+    if output_file:
+        with open(output_file, "w") as file:
+            system.export_orders(file)
+    else:
+        # If no output file was given,
+        # print the JSON to the terminal.
+        system.export_orders(sys.stdout)
+
+
+try:
+    main()
+except Exception:
+    print("The Matamazon script has encountered an error")
                 
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Matamazon System")
-
-    parser.add_argument(
-        "input_file",
-        nargs="?",
-        help="Input file containing Matamazon commands"
-    )
-
-    args = parser.parse_args()
-
-    if args.input_file:
-        load_system_from_file(args.input_file)
 
