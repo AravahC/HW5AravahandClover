@@ -670,8 +670,8 @@ def load_system_from_file(path):
                 
 
 
-
 if __name__ == "__main__":
     import sys
 
-    system = load_system_from_file(sys.argv[1])
+    if len(sys.argv) > 1:
+        load_system_from_file(sys.argv[1])
