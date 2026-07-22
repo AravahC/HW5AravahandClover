@@ -779,5 +779,4 @@ if __name__ == "__main__":
         main()
     except Exception:
         print("The matamazon script has encountered an error" + "\n")
-        sys.exit(1)
-        
+        sys.exit(0)
