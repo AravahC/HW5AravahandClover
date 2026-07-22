@@ -548,13 +548,24 @@ class MatamazonSystem:
                             supplierID = product.supplier_id
                     if city == self.suppliers[supplierID].city:
                         json_stuff[city].append(str(order)) """
+       """  result = {}        for order in self.orders.values():
+            product = self.products.get(order.product_id)
+            if product and product.supplier_id in self.suppliers:
+                city = self.suppliers[product.supplier_id].city
+                result.setdefault(city, []).append(str(order))
+        json.dump(result, out_file) """
         result = {}
-
         for order in self.orders.values():
             product = self.products.get(order.product_id)
             if product and product.supplier_id in self.suppliers:
                 city = self.suppliers[product.supplier_id].city
                 result.setdefault(city, []).append(str(order))
+            
+    # If out_file is a path string, open it; if it's a file-like object, write/dump to it
+    if isinstance(out_file, str):
+        with open(out_file, "w", encoding="utf-8") as f:
+            json.dump(result, f)
+    else:
         json.dump(result, out_file)
                         
         
