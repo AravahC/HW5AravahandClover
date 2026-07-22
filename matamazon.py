@@ -427,7 +427,6 @@ class MatamazonSystem:
         if(_id < 0):
             raise InvalidIdException("ID must be non-negative.")
         if(class_type == "Customer"):
-            #print("Removing customer!")
             if _id not in self.customers:
                 raise InvalidIdException("Customer does not exist.")
             for order in self.orders.values():
@@ -436,7 +435,6 @@ class MatamazonSystem:
 
             self.customers.pop(_id)
         elif class_type == "Supplier":
-            #print("Removing supplier!")
             if _id not in self.suppliers:
                 raise InvalidIdException("Supplier does not exist.")
             for order in self.orders.values():
@@ -446,7 +444,6 @@ class MatamazonSystem:
 
             self.suppliers.pop(_id)
         elif (class_type == "Product"):
-            #print("Removing Product!")
             if _id not in self.products:
                 raise InvalidIdException("Product does not exist.")
             for order in self.orders.values():
@@ -454,7 +451,6 @@ class MatamazonSystem:
                     raise InvalidIdException("ID cannot be removed.")
             self.products.pop(_id)
         elif class_type == "Order":
-            #print("Removing order!")
             if _id not in self.orders:
                 raise InvalidIdException("Order does not exist.")
             order = self.orders.pop(_id)
@@ -484,13 +480,11 @@ class MatamazonSystem:
         query_str = str(query).replace("_", " ").lower()
         right_products = []
         if max_price is not None:
-            #print("This is max_price: ", max_price)
             max_price = float(max_price)
         for product in self.products.values():
                 if product.quantity > 0:
                     if query_str in product.get_Name().lower():
                         if max_price is None or product.get_Price() <= max_price:
-                            #print("adding a product!", product.name)
                             right_products.append(product)
 
         return sorted(right_products)
@@ -598,7 +592,7 @@ def load_system_from_file(path):
     customers_and_suppliers = []
     products = []
 
-    with open(path, "r", encoding="utf-8") as file:
+    with open(path) as file:
         for line in file:
             line = line.strip()
             if not line:
@@ -621,11 +615,9 @@ def load_system_from_file(path):
             # anything else eval() might produce is silently ignored
 
     for entity in customers_and_suppliers:
-        #print("registering customer or supplier!")
         system.register_entity(entity, isinstance(entity, Customer))
 
     for product in products:
-        #print("Registering product!")
         system.add_or_update_product(product)
 
     return system
@@ -635,7 +627,7 @@ def execute_script(system, script_file_path):
     """
     Opens the script file and executes every command in it.
     """
-    with open(script_file_path, encoding="utf-8") as script_file:
+    with open(script_file_path) as script_file:
         for command in script_file:
             execute_script_command(system, command)
 
