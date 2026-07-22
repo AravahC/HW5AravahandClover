@@ -762,14 +762,21 @@ def main():
         # print the JSON to the terminal.
         system.export_orders(sys.stdout)
 import traceback
+# if __name__ == "__main__":
+#     try:
+#         main()
+#     #except Exception:
+#      #   traceback.print_exc()
+#     except Exception:
+#        print("The matamazon script has encountered an error" + "\n")
+#        sys.exit(0)
+#     #except Exception as e:
+#      #   print(e)
+#       #  raise
+
 if __name__ == "__main__":
     try:
         main()
-    #except Exception:
-     #   traceback.print_exc()
     except Exception:
-       print("The matamazon script has encountered an error" + "\n")
-       sys.exit(0)
-    #except Exception as e:
-     #   print(e)
-      #  raise
+        print("The matamazon script has encountered an error")
+        sys.exit(1)
