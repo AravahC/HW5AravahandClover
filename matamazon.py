@@ -695,16 +695,16 @@ def execute_script_command(system, command):
     elif command == "order":
 
         if len(line_pieces) == 3:
-            print(system.place_order(
+            system.place_order(
                 int(line_pieces[1]),
                 int(line_pieces[2])
-            ))
+            )
         else:
-            print(system.place_order(
+            system.place_order(
                 int(line_pieces[1]),
                 int(line_pieces[2]),
                 int(line_pieces[3])
-            ))
+            )
 
     elif command == "remove":
 
@@ -721,7 +721,7 @@ def execute_script_command(system, command):
                 float(line_pieces[2])
             )
         else:
-            results = system.search_products(line_pieces[1])
+            results = system.search_products(line_pieces[1].replace("_", " "))
 
         for product in results:
             print(product)
@@ -787,4 +787,4 @@ try:
     main()
 except Exception:
     print("The matamazon script has encountered an error", file=sys.stderr)
-    exit(1)
+    sys.exit(0)
