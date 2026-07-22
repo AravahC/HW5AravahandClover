@@ -477,13 +477,15 @@ class MatamazonSystem:
                 - Sorted by ascending price.
                 - If no matching products exist, return an empty list.
         """
-        query_str = str(query)
+        query_str = str(query).replace("_", " ").lower()
         right_products = []
-
+        if max_price is not None:
+            max_price = float(max_price)
         for product in self.products.values():
-            if product.quantity > 0 and query_str in product.get_Name():
-                if max_price is None or product.get_Price() <= max_price:
-                    right_products.append(product)
+                if product.quantity > 0:
+                    if query_str in product.get_Name().lower():
+                        if max_price is None or product.get_Price() <= max_price:
+                            right_products.append(product)
 
         return sorted(right_products)
 
