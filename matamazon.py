@@ -434,12 +434,12 @@ class MatamazonSystem:
                     raise InvalidIdException("Cannot remove a customer with an existing order.")
 
             self.customers.pop(_id)
-        elif (class_type == "Supplier"):
+        elif class_type == "Supplier":
             if _id not in self.suppliers:
                 raise InvalidIdException("Supplier does not exist.")
             for order in self.orders.values():
-                product = self.products[order.product_id]
-                if product.supplier_id == _id:
+                product = self.products.get(order.product_id)
+                if product and product.supplier_id == _id:
                     raise InvalidIdException("ID cannot be removed")
 
             self.suppliers.pop(_id)
@@ -476,18 +476,14 @@ class MatamazonSystem:
                 - Sorted by ascending price.
                 - If no matching products exist, return an empty list.
         """
+        query_str = str(query)
         right_products = []
 
         for product in self.products.values():
-            if(max_price == None):
-                if(query in product.get_Name()):
-                    if product.quantity > 0:
-                        right_products.append(product)
-            else:       
-                if(query in product.get_Name() and product.get_Price() <= max_price):
-                    if product.quantity > 0:
-                        right_products.append(product)
-        
+            if product.quantity > 0 and query_str in product.get_Name():
+                if max_price is None or product.get_Price() <= max_price:
+                    right_products.append(product)
+
         return sorted(right_products)
 
 
