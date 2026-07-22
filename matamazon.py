@@ -598,7 +598,7 @@ def load_system_from_file(path):
     customers_and_suppliers = []
     products = []
 
-    with open(path, "r", encoding="utf=8") as file:
+    with open(path, "r", encoding="utf-8") as file:
         for line in file:
             line = line.strip()
             if not line:
@@ -621,11 +621,11 @@ def load_system_from_file(path):
             # anything else eval() might produce is silently ignored
 
     for entity in customers_and_suppliers:
-        print("registering customer or supplier!")
+        #print("registering customer or supplier!")
         system.register_entity(entity, isinstance(entity, Customer))
 
     for product in products:
-        print("Registering product!")
+        #print("Registering product!")
         system.add_or_update_product(product)
 
     return system
@@ -785,8 +785,8 @@ def main():
         system.export_orders(sys.stdout)
 
 if __name__ == "__main__":
-    #try:
+    try:
         main()
-    #except Exception:
-       # print("The matamazon script has encountered an error")
-        #sys.exit(0)
+    except Exception:
+        print("The matamazon script has encountered an error")
+        sys.exit(0)
