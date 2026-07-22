@@ -393,7 +393,7 @@ class MatamazonSystem:
         if quantity > self.products[product_id].get_quantity():
             return "The quantity requested for this product is greater than the quantity in stock"
         self.products[product_id].reduce_quantity(quantity)
-        newOrder = Order(num, customer_id, product_id, quantity, price*quantity)
+        newOrder = Order(num, customer_id, product_id, quantity, round(price*quantity,2))
         self.orders[num] = newOrder
         self.orderNum+=1
         return "The order has been accepted in the system"
@@ -419,6 +419,7 @@ class MatamazonSystem:
                   in the system (i.e., orders that were not removed).
                 - Additional InvalidIdException conditions as required by specification.
         """
+        class_type = class_type.strip().capitalize()
         if(_id < 0):
             raise InvalidIdException("ID must be non-negative.")
         if(class_type == "Customer"):
@@ -785,5 +786,5 @@ def main():
 try:
     main()
 except Exception:
-    print("The matamazon script has encountered an error")
+    print("The matamazon script has encountered an error", file=sys.stderr)
     exit(1)
