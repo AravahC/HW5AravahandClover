@@ -723,8 +723,7 @@ def execute_script_command(system, command):
         else:
             results = system.search_products(line_pieces[1].replace("_", " "))
 
-        for product in results:
-            print(product)
+        print(results)
 
 USAGE_MESSAGE = (
     "Usage: python3 matamazon.py -l < matamazon_log > -s < matamazon_system > "
@@ -786,5 +785,5 @@ def main():
 try:
     main()
 except Exception:
-    print("The matamazon script has encountered an error", file=sys.stderr)
+    print("The matamazon script has encountered an error")
     sys.exit(0)
