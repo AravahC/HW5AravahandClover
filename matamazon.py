@@ -166,7 +166,7 @@ class Product:
         if(quantity>=0):
             self.quantity = quantity
         else:
-            raise ValueError("quantity must be non-negative")
+            raise InvalidIdException("ID must be non-negative.")
     def reduce_quantity(self,num):
         self.quantity-=num
         if (self.quantity < 0):
@@ -541,13 +541,13 @@ class MatamazonSystem:
             if product and product.supplier_id in self.suppliers:
                 city = self.suppliers[product.supplier_id].city
                 result.setdefault(city, []).append(str(order))
-        json.dump(result, out_file)
+            
     # If out_file is a path string, open it; if it's a file-like object, write/dump to it
-       #"""  if isinstance(out_file, str):
-        #    with open(out_file, "w", encoding="utf-8") as f:
-         #       json.dump(result, f)
-        #else: """
-        
+        if isinstance(out_file, str):
+            with open(out_file, "w", encoding="utf-8") as f:
+                json.dump(result, f)
+        else:
+            json.dump(result, out_file)
                         
         
 
@@ -636,6 +636,7 @@ def execute_script_command(system, command):
     command = line_pieces[0]
 
     if command == "register":
+
         if line_pieces[1] == "customer":
             customer = Customer(
                 int(line_pieces[2]),
@@ -655,6 +656,7 @@ def execute_script_command(system, command):
             system.register_entity(supplier, False)
 
     elif command == "add":
+
         product = Product(
             int(line_pieces[1]),
             line_pieces[2].replace("_", " "),
@@ -666,6 +668,7 @@ def execute_script_command(system, command):
         system.add_or_update_product(product)
 
     elif command == "update":
+
         product = Product(
             int(line_pieces[1]),
             line_pieces[2].replace("_", " "),
@@ -677,6 +680,7 @@ def execute_script_command(system, command):
         system.add_or_update_product(product)
 
     elif command == "order":
+
         if len(line_pieces) == 3:
             system.place_order(
                 int(line_pieces[1]),
@@ -690,12 +694,14 @@ def execute_script_command(system, command):
             )
 
     elif command == "remove":
+
         system.remove_object(
             int(line_pieces[2]),
             line_pieces[1].capitalize()
         )
 
     elif command == "search":
+
         if len(line_pieces) > 2:
             results = system.search_products(
                 line_pieces[1].replace("_", " "),
@@ -762,21 +768,9 @@ def main():
         # print the JSON to the terminal.
         system.export_orders(sys.stdout)
 
-# if __name__ == "__main__":
-#     try:
-#         main()
-#     #except Exception:
-#      #   traceback.print_exc()
-#     except Exception:
-#        print("The matamazon script has encountered an error" + "\n")
-#        sys.exit(0)
-#     #except Exception as e:
-#      #   print(e)
-#       #  raise
-
 if __name__ == "__main__":
     try:
         main()
     except Exception:
         print("The matamazon script has encountered an error")
-        sys.exit(1)
+        sys.exit(0)
