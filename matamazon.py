@@ -57,7 +57,7 @@ class Customer:
         self.address = address
     def __str__(self):
         return f"Customer(id={self.id}, name='{self.name}', city='{self.city}', address='{self.address}')"   
-
+    __repr__ = __str__
 
 class Supplier:
     """
@@ -106,7 +106,7 @@ class Supplier:
         self.address = address
     def __str__(self):
         return f"Supplier(id={self.id}, name='{self.name}', city='{self.city}', address='{self.address}')"
-
+    __repr__ = __str__
 
 class Product:
     """
@@ -188,6 +188,7 @@ class Product:
         )    
     def __lt__(self, other):
         return self.price < other.price
+    __repr__ = __str__
 
 
 
@@ -264,6 +265,7 @@ class Order:
         if(price < 0):
             raise InvalidPriceException("Price must be non-negative.")
         self.total_price = price
+    __repr__ = __str__
 
 class MatamazonSystem:
     """
@@ -484,7 +486,7 @@ class MatamazonSystem:
                     if product.quantity > 0:
                         right_products.append(product)
         
-        return sorted(right_products, key=lambda p: p.price)
+        return sorted(right_products, key=lambda p: (p.price, p.id))
 
 
     def export_system_to_file(self, path):
