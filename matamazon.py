@@ -1,5 +1,5 @@
 import json
-
+import argparse
 
 class InvalidIdException(Exception):
     "id is not valid according to the specification"
@@ -670,9 +670,17 @@ def load_system_from_file(path):
                 
 
 
-""" if __name__ == "__main__":
-    import sys
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Matamazon System")
 
-    if len(sys.argv) > 1:
-        load_system_from_file(sys.argv[1])
-    pass """
+    parser.add_argument(
+        "input_file",
+        nargs="?",
+        help="Input file containing Matamazon commands"
+    )
+
+    args = parser.parse_args()
+
+    if args.input_file:
+        load_system_from_file(args.input_file)
+
