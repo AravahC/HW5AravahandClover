@@ -187,7 +187,9 @@ class Product:
             f"quantity={self.quantity})"
         )    
     def __lt__(self, other):
-        return self.price < other.price
+        if self.price != other.price:
+            return self.price < other.price
+        return self.id < other.id
     __repr__ = __str__
 
 
@@ -486,7 +488,7 @@ class MatamazonSystem:
                     if product.quantity > 0:
                         right_products.append(product)
         
-        return sorted(right_products, key=lambda p: (p.price, p.id))
+        return sorted(right_products)
 
 
     def export_system_to_file(self, path):
