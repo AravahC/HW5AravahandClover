@@ -781,9 +781,9 @@ def main():
         # print the JSON to the terminal.
         system.export_orders(sys.stdout)
 
-
-try:
-    main()
-except Exception:
-    print("The matamazon script has encountered an error")
-    sys.exit(0)
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception:
+        print("The matamazon script has encountered an error")
+        sys.exit(0)
