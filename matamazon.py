@@ -618,8 +618,6 @@ def load_system_from_file(path):
                 customers_and_suppliers.append(obj)
             # anything else eval() might produce is silently ignored
 
-    # Register customers/suppliers first, then products, since the file
-    # gives no guarantee that a supplier line appears before its products.
     for entity in customers_and_suppliers:
         system.register_entity(entity, isinstance(entity, Customer))
 
@@ -654,18 +652,18 @@ def execute_script_command(system, command):
         if line_pieces[1] == "customer":
             customer = Customer(
                 int(line_pieces[2]),
-                line_pieces[3],
-                line_pieces[4],
-                line_pieces[5]
+                line_pieces[3].replace("_", " "),
+                line_pieces[4].replace("_", " "),
+                line_pieces[5].replace("_", " ")
             )
             system.register_entity(customer, True)
 
         else:
             supplier = Supplier(
                 int(line_pieces[2]),
-                line_pieces[3],
-                line_pieces[4],
-                line_pieces[5]
+                line_pieces[3].replace("_", " "),
+                line_pieces[4].replace("_", " "),
+                line_pieces[5].replace("_", " ")
             )
             system.register_entity(supplier, False)
 
@@ -673,7 +671,7 @@ def execute_script_command(system, command):
 
         product = Product(
             int(line_pieces[1]),
-            line_pieces[2],
+            line_pieces[2].replace("_", " "),
             float(line_pieces[3]),
             int(line_pieces[4]),
             int(line_pieces[5])
@@ -685,7 +683,7 @@ def execute_script_command(system, command):
 
         product = Product(
             int(line_pieces[1]),
-            line_pieces[2],
+            line_pieces[2].replace("_", " "),
             float(line_pieces[3]),
             int(line_pieces[4]),
             int(line_pieces[5])
@@ -718,7 +716,7 @@ def execute_script_command(system, command):
 
         if len(line_pieces) > 2:
             results = system.search_products(
-                line_pieces[1],
+                line_pieces[1].replace("_", " "),
                 float(line_pieces[2])
             )
         else:
@@ -788,3 +786,4 @@ try:
     main()
 except Exception:
     print("The matamazon script has encountered an error")
+    exit(1)
