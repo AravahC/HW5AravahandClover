@@ -765,5 +765,8 @@ import traceback
 if __name__ == "__main__":
     try:
         main()
+    #except Exception:
+     #   traceback.print_exc()
     except Exception:
-        traceback.print_exc()
+        print("The matamazon script has encountered an error")
+        sys.exit(0)
