@@ -450,13 +450,14 @@ class MatamazonSystem:
                 if order.product_id == _id:
                     raise InvalidIdException("ID cannot be removed.")
             self.products.pop(_id)
-        elif (class_type == "Order"):
+        elif class_type == "Order":
             if _id not in self.orders:
                 raise InvalidIdException("Order does not exist.")
-            orderquantity = self.orders[_id].quantity
-            self.products[self.orders[_id].product_id].quantity += orderquantity
-            self.orders.pop(_id)
-            return orderquantity
+            order = self.orders.pop(_id)
+            product = self.products.get(order.product_id)
+            if product:
+                product.quantity += order.quantity
+            return order.quantity
         else:
             raise InvalidIdException("Unknown class type.")
 
@@ -548,18 +549,10 @@ class MatamazonSystem:
         result = {}
 
         for order in self.orders.values():
-
-            product = self.products[order.product_id]
-
-            supplier = self.suppliers[product.supplier_id]
-
-            city = supplier.city
-
-            if city not in result:
-                result[city] = []
-
-            result[city].append(str(order))
-
+            product = self.products.get(order.product_id)
+            if product and product.supplier_id in self.suppliers:
+                city = self.suppliers[product.supplier_id].city
+                result.setdefault(city, []).append(str(order))
         json.dump(result, out_file)
                         
         
