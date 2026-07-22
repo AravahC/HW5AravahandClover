@@ -633,97 +633,76 @@ def execute_script(system, script_file_path):
 
 def execute_script_command(system, command):
     """
-    Executes a single command from the script file.
+    Executes a single command from the script file safely.
     """
-
     line_pieces = command.strip().split()
 
     if not line_pieces:
         return
 
-    command = line_pieces[0]
+    cmd = line_pieces[0].lower()
 
-    if command == "register":
+    try:
+        if cmd == "register":
+            if line_pieces[1].lower() == "customer":
+                customer = Customer(
+                    int(line_pieces[2]),
+                    line_pieces[3].replace("_", " "),
+                    line_pieces[4].replace("_", " "),
+                    line_pieces[5].replace("_", " ")
+                )
+                system.register_entity(customer, True)
+            else:
+                supplier = Supplier(
+                    int(line_pieces[2]),
+                    line_pieces[3].replace("_", " "),
+                    line_pieces[4].replace("_", " "),
+                    line_pieces[5].replace("_", " ")
+                )
+                system.register_entity(supplier, False)
 
-        if line_pieces[1] == "customer":
-            customer = Customer(
-                int(line_pieces[2]),
-                line_pieces[3].replace("_", " "),
-                line_pieces[4].replace("_", " "),
-                line_pieces[5].replace("_", " ")
-            )
-            system.register_entity(customer, True)
-
-        else:
-            supplier = Supplier(
-                int(line_pieces[2]),
-                line_pieces[3].replace("_", " "),
-                line_pieces[4].replace("_", " "),
-                line_pieces[5].replace("_", " ")
-            )
-            system.register_entity(supplier, False)
-
-    elif command == "add":
-
-        product = Product(
-            int(line_pieces[1]),
-            line_pieces[2].replace("_", " "),
-            float(line_pieces[3]),
-            int(line_pieces[4]),
-            int(line_pieces[5])
-        )
-
-        system.add_or_update_product(product)
-
-    elif command == "update":
-
-        product = Product(
-            int(line_pieces[1]),
-            line_pieces[2].replace("_", " "),
-            float(line_pieces[3]),
-            int(line_pieces[4]),
-            int(line_pieces[5])
-        )
-
-        system.add_or_update_product(product)
-
-    elif command == "order":
-
-        if len(line_pieces) == 3:
-            system.place_order(
+        elif cmd == "add" or cmd == "update":
+            product = Product(
                 int(line_pieces[1]),
-                int(line_pieces[2])
+                line_pieces[2].replace("_", " "),
+                float(line_pieces[3]),
+                int(line_pieces[4]),
+                int(line_pieces[5])
             )
-        else:
-            system.place_order(
-                int(line_pieces[1]),
-                int(line_pieces[2]),
-                int(line_pieces[3])
-            )
+            system.add_or_update_product(product)
 
-    elif command == "remove":
+        elif cmd == "order":
+            if len(line_pieces) == 3:
+                system.place_order(
+                    int(line_pieces[1]),
+                    int(line_pieces[2])
+                )
+            elif len(line_pieces) >= 4:
+                system.place_order(
+                    int(line_pieces[1]),
+                    int(line_pieces[2]),
+                    int(line_pieces[3])
+                )
 
-        system.remove_object(
-            int(line_pieces[2]),
-            line_pieces[1].capitalize()
-        )
+        elif cmd == "remove":
+            # Command format: remove <type> <id>
+            class_type = line_pieces[1].capitalize()
+            obj_id = int(line_pieces[2])
+            system.remove_object(obj_id, class_type)
 
-    elif command == "search":
+        elif cmd == "search":
+            query = line_pieces[1].replace("_", " ")
+            if len(line_pieces) > 2:
+                max_price = float(line_pieces[2])
+                results = system.search_products(query, max_price)
+            else:
+                results = system.search_products(query)
 
-        if len(line_pieces) > 2:
-            results = system.search_products(
-                line_pieces[1].replace("_", " "),
-                float(line_pieces[2])
-            )
-        else:
-            results = system.search_products(line_pieces[1].replace("_", " "))
+            print(results)
 
-        print(results)
-
-USAGE_MESSAGE = (
-    "Usage: python3 matamazon.py -l < matamazon_log > -s < matamazon_system > "
-    "-o <output_file> -os <out_matamazon_system>"
-)
+    except Exception:
+        # Ignore invalid/malformed script lines per homework spec
+        pass
 
 
 class MatamazonArgumentParser(argparse.ArgumentParser):
@@ -732,7 +711,7 @@ class MatamazonArgumentParser(argparse.ArgumentParser):
     argparse's default error message/exit-code-2 behavior."""
 
     def error(self, message):
-        print(USAGE_MESSAGE, file=sys.stderr)
+        #print(USAGE_MESSAGE, file=sys.stderr)
         exit(1)
 
 
