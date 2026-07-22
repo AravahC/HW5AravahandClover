@@ -316,7 +316,7 @@ class MatamazonSystem:
                 - If the entity ID already exists in the system (note: IDs must be unique across
                   customers AND suppliers).
         """
-        if entity.id in self.customers or entity.id in self.suppliers:
+        if entity.id in self.customers and entity.id in self.suppliers:
             raise InvalidIdException("ID already exists.")
 
         if is_customer:
