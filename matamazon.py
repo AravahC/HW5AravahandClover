@@ -27,32 +27,16 @@ class Customer:
         Exact formatting requirements appear in the assignment PDF.
     """
 
+    # TODO implement this class as instructed
+
     def __init__(self, id, name, city, address):
-        if(id < 0):
+        if(id < 0 or not isinstance(id, int)):
             raise InvalidIdException("ID must be non-negative.")
         self.id = id
         self.name = name
         self.city = city
         self.address = address
     
-    def get_name(self):
-        return self.name
-    def set_name(self, newName):
-        self.name = newName
-    def get_id(self):
-        return self.id
-    def set_id(self, id):
-        if(id < 0):
-            raise InvalidIdException("ID must be non-negative.")
-        self.id = id
-    def set_city(self, city):
-        self.city = city
-    def get_city(self):
-        return self.city
-    def get_address(self):
-        return self.address
-    def set_address(self, address):
-        self.address = address
     def __str__(self):
         return f"Customer(id={self.id}, name='{self.name}', city='{self.city}', address='{self.address}')"   
     __repr__ = __str__
@@ -75,32 +59,15 @@ class Supplier:
             Supplier(id=42, name='Yinon Goldshtein', city='Haifa, address='32 David Rose Street')
     """
 
+    # TODO implement this class as instructed
     def __init__(self, id, name, city, address):
-        if (id < 0):
+        if (id < 0 or not isinstance(id, int)):
             raise InvalidIdException("ID must be non-negative.")
         self.id = id
         self.name = name
         self.city = city
         self.address = address
     
-    def get_name(self):
-        return self.name
-    def set_name(self, newName):
-        self.name = newName
-    def get_id(self):
-        return self.id
-    def set_id(self, id):
-        if(id < 0):
-            raise InvalidIdException("ID must be non-negative.")
-        self.id = id
-    def set_city(self, city):
-        self.city = city
-    def get_city(self):
-        return self.city
-    def get_address(self):
-        return self.address
-    def set_address(self, address):
-        self.address = address
     def __str__(self):
         return f"Supplier(id={self.id}, name='{self.name}', city='{self.city}', address='{self.address}')"
     __repr__ = __str__
@@ -128,7 +95,7 @@ class Product:
     """
 
     def __init__(self, id, name, price, supplier_id, quantity):
-        if id < 0 or supplier_id < 0 or quantity < 0:
+        if id < 0 or supplier_id < 0 or quantity < 0 or (not isinstance(id, int) or not isinstance(supplier_id, int) or isinstance(quantity, int)):
             raise InvalidIdException("ID must be non-negative.")
 
         if price < 0:
@@ -140,41 +107,6 @@ class Product:
         self.supplier_id = supplier_id
         self.quantity = quantity
     
-    def get_name(self):
-        return self.name
-    def set_name(self, newName):
-        self.name = newName
-    def get_id(self):
-        return self.id
-    def set_id(self, id):
-        if(id < 0):
-            raise InvalidIdException("ID must be non-negative.")
-        self.id = id
-    def set_supplier_id(self, supplier_ID):
-        if supplier_ID < 0:
-            raise InvalidIdException("ID must be non-negative.")
-        
-        self.supplier_id = supplier_ID
-    def get_supplier_id(self):
-        return self.supplier_id
-    def get_quantity(self):
-        return self.quantity
-    def set_quantity(self, quantity):
-        if(quantity>=0):
-            self.quantity = quantity
-        else:
-            raise InvalidIdException("ID must be non-negative.")
-    def reduce_quantity(self,num):
-        self.quantity-=num
-        if (self.quantity < 0):
-            self.quantity = 0
-    def set_price(self, price):
-        if(price>=0):
-            self.price = price
-        else:
-            raise InvalidPriceException("Price must be non-negative.")
-    def get_price(self):
-        return self.price
     def __str__(self):
         return (
             f"Product(id={self.id}, "
@@ -213,8 +145,9 @@ class Order:
             Order(id=1, customer_id=42, product_id=101, quantity=10, total_price=299.9)
 
     """
+
     def __init__(self, id, customer_id, product_id, quantity, total_price):
-        if id < 0 or customer_id < 0 or product_id < 0 or quantity < 0:
+        if id < 0 or customer_id < 0 or product_id < 0 or quantity < 0 or (not isinstance(id, int) or not isinstance(customer_id, int) or not isinstance(supplier_id, int), or not isinstance(quantity, int)):
             raise InvalidIdException("ID must be non-negative.")
         if total_price < 0:
             raise InvalidPriceException("Price must be non-negative.")
@@ -232,27 +165,27 @@ class Order:
             f"quantity={self.quantity}, "
             f"total_price={self.total_price})"
         )    
-    def set_id(self, id):
+    def setID(self, id):
         if(id < 0):
             raise InvalidIdException("ID must be non-negative.")
         self.id = id;
-    def get_id(self):
+    def getID(self):
         return self.id
-    def get_customer_id(self):
+    def getcustomer_id(self):
         return self.customer_id
-    def set_customer_id(self, id):
+    def setcustomer_id(self, id):
         if(id < 0):
             raise InvalidIdException("ID must be non-negative.")
         self.customer_id = id
-    def set_product_id(self, product_id):
+    def setproduct_id(self, product_id):
         if(product_id < 0):
             raise InvalidIdException("ID must be non-negative.")
         self.product_id = product_id
-    def get_product_id(self):
+    def getproduct_id(self):
         return self.product_id
-    def get_quantity(self):
+    def getQuantity(self):
         return self.quantity
-    def set_quantity(self, quantity):
+    def setquantity(self, quantity):
         if(quantity < 0):
             raise InvalidIdException("ID must be non-negative.")
         self.quantity = quantity
@@ -296,6 +229,8 @@ class MatamazonSystem:
             - Must be parameterless.
             - Internal collections may be chosen freely (dict/list, etc.).
         """
+
+
     def register_entity(self, entity, is_customer): #done
         """
         Register a Customer or Supplier in the system.
@@ -309,7 +244,6 @@ class MatamazonSystem:
                 - If the entity ID already exists in the system (note: IDs must be unique across
                   customers AND suppliers).
         """
-
         if is_customer:
             if entity.id in self.customers:
                 raise InvalidIdException("ID already exists.")
@@ -389,7 +323,7 @@ class MatamazonSystem:
             return "The product does not exist in the system"
         num = self.orderNum
         price = self.products[product_id].get_Price()
-        if quantity > self.products[product_id].get_quantity():
+        if quantity > self.products[product_id].quantity:
             return "The quantity requested for this product is greater than the quantity in stock"
         self.products[product_id].reduce_quantity(quantity)
         newOrder = Order(num, customer_id, product_id, quantity, round(price*quantity,2))
@@ -478,8 +412,8 @@ class MatamazonSystem:
             max_price = float(max_price)
         for product in self.products.values():
                 if product.quantity > 0:
-                    if query_str in product.get_Name().lower():
-                        if max_price is None or product.get_Price() <= max_price:
+                    if query_str in product.name.lower():
+                        if max_price is None or product.price <= max_price:
                             right_products.append(product)
 
         return sorted(right_products)
@@ -536,7 +470,7 @@ class MatamazonSystem:
             if product and product.supplier_id in self.suppliers:
                 city = self.suppliers[product.supplier_id].city
                 result.setdefault(city, []).append(str(order))
-
+            
         if isinstance(out_file, str):
             with open(out_file, "w", encoding="utf-8") as f:
                 json.dump(result, f)
@@ -567,7 +501,6 @@ def load_system_from_file(path):
         - The assignment hints that eval() may be used.
     """
     system = MatamazonSystem()
-
     eval_globals = {"Customer": Customer, "Supplier": Supplier, "Product": Product}
 
     customers_and_suppliers = []
@@ -578,7 +511,6 @@ def load_system_from_file(path):
             line = line.strip()
             if not line:
                 continue
-
             try:
                 obj = eval(line, eval_globals)
             except (InvalidIdException, InvalidPriceException):
@@ -708,24 +640,26 @@ class MatamazonArgumentParser(argparse.ArgumentParser):
 
 
 def main():
-   
     parser = MatamazonArgumentParser(add_help=False, allow_abbrev=False)
 
-    parser.add_argument("-l", dest="log_file") 
-    parser.add_argument("-s", dest="system_file")
-    parser.add_argument("-o", dest="output_file")
-    parser.add_argument("-os", dest="out_system_file")
+    parser.add_argument("-l", dest="log_file")           # Log/script file (required)
+    parser.add_argument("-s", dest="system_file")        # Existing system file (optional)
+    parser.add_argument("-o", dest="output_file")        # Orders JSON export (optional)
+    parser.add_argument("-os", dest="out_system_file")   # System export (optional)
 
     args = parser.parse_args()
 
     if args.log_file is None:
         parser.error("missing required -l flag")
+
     system = (
         load_system_from_file(args.system_file)
         if args.system_file
         else MatamazonSystem()
     )
+
     execute_script(system, args.log_file)
+
     if args.out_system_file:
         system.export_system_to_file(args.out_system_file)
 
