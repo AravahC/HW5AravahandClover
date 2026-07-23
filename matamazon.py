@@ -316,12 +316,19 @@ class MatamazonSystem:
                 - If the entity ID already exists in the system (note: IDs must be unique across
                   customers AND suppliers).
         """
-        if entity.id in self.customers and entity.id in self.suppliers:
-            raise InvalidIdException("ID already exists.")
+       # print(f"REGISTER: {entity} customer={is_customer}")
+       #print("Customers:", list(self.customers.keys()))
+        #print("Suppliers:", list(self.suppliers.keys()))
+
+        
 
         if is_customer:
+            if entity.id in self.customers:
+                raise InvalidIdException("ID already exists.")
             self.customers[entity.id] = entity
         else:
+            if entity.id in self.suppliers:
+                raise InvalidIdException("ID already exists.")
             self.suppliers[entity.id] = entity
 
 
