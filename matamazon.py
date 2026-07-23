@@ -27,8 +27,6 @@ class Customer:
         Exact formatting requirements appear in the assignment PDF.
     """
 
-    # TODO implement this class as instructed
-
     def __init__(self, id, name, city, address):
         if(id < 0):
             raise InvalidIdException("ID must be non-negative.")
@@ -37,19 +35,19 @@ class Customer:
         self.city = city
         self.address = address
     
-    def get_Name(self):
+    def get_name(self):
         return self.name
-    def set_Name(self, newName):
+    def set_name(self, newName):
         self.name = newName
-    def get_ID(self):
+    def get_id(self):
         return self.id
-    def set_ID(self, id):
+    def set_id(self, id):
         if(id < 0):
             raise InvalidIdException("ID must be non-negative.")
         self.id = id
-    def set_City(self, city):
+    def set_city(self, city):
         self.city = city
-    def get_City(self):
+    def get_city(self):
         return self.city
     def get_address(self):
         return self.address
@@ -77,7 +75,6 @@ class Supplier:
             Supplier(id=42, name='Yinon Goldshtein', city='Haifa, address='32 David Rose Street')
     """
 
-    # TODO implement this class as instructed
     def __init__(self, id, name, city, address):
         if (id < 0):
             raise InvalidIdException("ID must be non-negative.")
@@ -86,19 +83,19 @@ class Supplier:
         self.city = city
         self.address = address
     
-    def get_Name(self):
+    def get_name(self):
         return self.name
-    def set_Name(self, newName):
+    def set_name(self, newName):
         self.name = newName
-    def get_ID(self):
+    def get_id(self):
         return self.id
-    def set_ID(self, id):
+    def set_id(self, id):
         if(id < 0):
             raise InvalidIdException("ID must be non-negative.")
         self.id = id
-    def set_City(self, city):
+    def set_city(self, city):
         self.city = city
-    def get_City(self):
+    def get_city(self):
         return self.city
     def get_address(self):
         return self.address
@@ -143,22 +140,22 @@ class Product:
         self.supplier_id = supplier_id
         self.quantity = quantity
     
-    def get_Name(self):
+    def get_name(self):
         return self.name
-    def set_Name(self, newName):
+    def set_name(self, newName):
         self.name = newName
-    def get_ID(self):
+    def get_id(self):
         return self.id
-    def set_ID(self, id):
+    def set_id(self, id):
         if(id < 0):
             raise InvalidIdException("ID must be non-negative.")
         self.id = id
-    def set_supplierID(self, supplier_ID):
+    def set_supplier_id(self, supplier_ID):
         if supplier_ID < 0:
             raise InvalidIdException("ID must be non-negative.")
         
         self.supplier_id = supplier_ID
-    def get_SupplierID(self):
+    def get_supplier_id(self):
         return self.supplier_id
     def get_quantity(self):
         return self.quantity
@@ -171,12 +168,12 @@ class Product:
         self.quantity-=num
         if (self.quantity < 0):
             self.quantity = 0
-    def set_Price(self, price):
+    def set_price(self, price):
         if(price>=0):
             self.price = price
         else:
             raise InvalidPriceException("Price must be non-negative.")
-    def get_Price(self):
+    def get_price(self):
         return self.price
     def __str__(self):
         return (
@@ -216,8 +213,6 @@ class Order:
             Order(id=1, customer_id=42, product_id=101, quantity=10, total_price=299.9)
 
     """
-
-    # TODO implement this class as instructed
     def __init__(self, id, customer_id, product_id, quantity, total_price):
         if id < 0 or customer_id < 0 or product_id < 0 or quantity < 0:
             raise InvalidIdException("ID must be non-negative.")
@@ -237,33 +232,33 @@ class Order:
             f"quantity={self.quantity}, "
             f"total_price={self.total_price})"
         )    
-    def setID(self, id):
+    def set_id(self, id):
         if(id < 0):
             raise InvalidIdException("ID must be non-negative.")
         self.id = id;
-    def getID(self):
+    def get_id(self):
         return self.id
-    def getcustomer_id(self):
+    def get_customer_id(self):
         return self.customer_id
-    def setcustomer_id(self, id):
+    def set_customer_id(self, id):
         if(id < 0):
             raise InvalidIdException("ID must be non-negative.")
         self.customer_id = id
-    def setproduct_id(self, product_id):
+    def set_product_id(self, product_id):
         if(product_id < 0):
             raise InvalidIdException("ID must be non-negative.")
         self.product_id = product_id
-    def getproduct_id(self):
+    def get_product_id(self):
         return self.product_id
-    def getQuantity(self):
+    def get_quantity(self):
         return self.quantity
-    def setquantity(self, quantity):
+    def set_quantity(self, quantity):
         if(quantity < 0):
             raise InvalidIdException("ID must be non-negative.")
         self.quantity = quantity
-    def gettotal_price(self):
+    def get_total_price(self):
         return self.total_price
-    def settotal_price(self, price):
+    def set_total_price(self, price):
         if(price < 0):
             raise InvalidPriceException("Price must be non-negative.")
         self.total_price = price
@@ -288,7 +283,7 @@ class MatamazonSystem:
         - A parameterless constructor is required.
     """
 
-    def __init__(self): #done?
+    def __init__(self): 
         self.suppliers = {}
         self.customers = {}
         self.orders = {}
@@ -301,8 +296,6 @@ class MatamazonSystem:
             - Must be parameterless.
             - Internal collections may be chosen freely (dict/list, etc.).
         """
-
-
     def register_entity(self, entity, is_customer): #done
         """
         Register a Customer or Supplier in the system.
@@ -316,11 +309,6 @@ class MatamazonSystem:
                 - If the entity ID already exists in the system (note: IDs must be unique across
                   customers AND suppliers).
         """
-       # print(f"REGISTER: {entity} customer={is_customer}")
-       #print("Customers:", list(self.customers.keys()))
-        #print("Suppliers:", list(self.suppliers.keys()))
-
-        
 
         if is_customer:
             if entity.id in self.customers:
@@ -548,8 +536,7 @@ class MatamazonSystem:
             if product and product.supplier_id in self.suppliers:
                 city = self.suppliers[product.supplier_id].city
                 result.setdefault(city, []).append(str(order))
-            
-    # If out_file is a path string, open it; if it's a file-like object, write/dump to it
+
         if isinstance(out_file, str):
             with open(out_file, "w", encoding="utf-8") as f:
                 json.dump(result, f)
@@ -581,11 +568,6 @@ def load_system_from_file(path):
     """
     system = MatamazonSystem()
 
-    # The system file uses the same textual format produced by
-    # export_system_to_file / print(obj) — e.g.
-    #   Customer(id=1, name='Dana', city='Haifa', address='1 St')
-    # Since the printed keyword names match the constructors' parameter
-    # names exactly, eval() reconstructs the object directly.
     eval_globals = {"Customer": Customer, "Supplier": Supplier, "Product": Product}
 
     customers_and_suppliers = []
@@ -600,18 +582,14 @@ def load_system_from_file(path):
             try:
                 obj = eval(line, eval_globals)
             except (InvalidIdException, InvalidPriceException):
-                # A real object was being built but the data was invalid:
-                # per spec, stop and propagate this exception.
                 raise
             except Exception:
-                # Not a valid Customer/Supplier/Product line -> ignore it.
                 continue
 
             if isinstance(obj, Product):
                 products.append(obj)
             elif isinstance(obj, (Customer, Supplier)):
                 customers_and_suppliers.append(obj)
-            # anything else eval() might produce is silently ignored
 
     for entity in customers_and_suppliers:
         system.register_entity(entity, isinstance(entity, Customer))
@@ -643,7 +621,6 @@ def execute_script_command(system, command):
     command = line_pieces[0]
 
     if command == "register":
-
         if line_pieces[1] == "customer":
             customer = Customer(
                 int(line_pieces[2]),
@@ -663,7 +640,6 @@ def execute_script_command(system, command):
             system.register_entity(supplier, False)
 
     elif command == "add":
-
         product = Product(
             int(line_pieces[1]),
             line_pieces[2].replace("_", " "),
@@ -675,7 +651,6 @@ def execute_script_command(system, command):
         system.add_or_update_product(product)
 
     elif command == "update":
-
         product = Product(
             int(line_pieces[1]),
             line_pieces[2].replace("_", " "),
@@ -687,7 +662,6 @@ def execute_script_command(system, command):
         system.add_or_update_product(product)
 
     elif command == "order":
-
         if len(line_pieces) == 3:
             system.place_order(
                 int(line_pieces[1]),
@@ -701,14 +675,12 @@ def execute_script_command(system, command):
             )
 
     elif command == "remove":
-
         system.remove_object(
             int(line_pieces[2]),
             line_pieces[1].capitalize()
         )
 
     elif command == "search":
-
         if len(line_pieces) > 2:
             results = system.search_products(
                 line_pieces[1].replace("_", " "),
@@ -736,43 +708,31 @@ class MatamazonArgumentParser(argparse.ArgumentParser):
 
 
 def main():
-    # Create the argument parser
+   
     parser = MatamazonArgumentParser(add_help=False, allow_abbrev=False)
 
-    parser.add_argument("-l", dest="log_file")           # Log/script file (required)
-    parser.add_argument("-s", dest="system_file")        # Existing system file (optional)
-    parser.add_argument("-o", dest="output_file")        # Orders JSON export (optional)
-    parser.add_argument("-os", dest="out_system_file")   # System export (optional)
+    parser.add_argument("-l", dest="log_file") 
+    parser.add_argument("-s", dest="system_file")
+    parser.add_argument("-o", dest="output_file")
+    parser.add_argument("-os", dest="out_system_file")
 
-    # Read the command-line arguments
     args = parser.parse_args()
 
-    # A log/script file is required
     if args.log_file is None:
         parser.error("missing required -l flag")
-
-    # Load an existing system if supplied,
-    # otherwise create an empty one.
     system = (
         load_system_from_file(args.system_file)
         if args.system_file
         else MatamazonSystem()
     )
-
-    # Execute all commands in the log file
     execute_script(system, args.log_file)
-
-    # Export the current system (customers, suppliers, products)
     if args.out_system_file:
         system.export_system_to_file(args.out_system_file)
 
-    # Export orders
     if args.output_file:
         with open(args.output_file, "w") as file:
             system.export_orders(file)
     else:
-        # If no output file was given,
-        # print the JSON to the terminal.
         system.export_orders(sys.stdout)
 
 if __name__ == "__main__":
